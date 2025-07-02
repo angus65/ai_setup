@@ -31,7 +31,8 @@ Before manual review, run these regex checks:
 - [ ] Entire content is wrapped in a single `workspace {}` block
 - [ ] Contains required `model {}` block
 - [ ] Contains required `views {}` block
-- [ ] Optional `configuration {}` and `styles {}` blocks are properly structured
+- [ ] Optional `configuration {}` blocks are properly structured
+- [ ] **CRITICAL**: `styles {}` block is inside `views {}`, not at workspace root
 
 ### 2. Model Block Validation
 - [ ] All `person` declarations are at the top level of `model {}`
@@ -60,6 +61,7 @@ Before manual review, run these regex checks:
 - [ ] View keys use only lowercase letters, numbers, hyphens, or underscores
 - [ ] No quotes or spaces in view names
 - [ ] All referenced elements exist in the model
+- [ ] `styles {}` block is properly nested inside `views {}` block
 
 ### 6. Deployment Views (If Present)
 - [ ] Environment names are valid (`development`, `live`, `production`)
@@ -89,7 +91,9 @@ Apply fixes in this order to avoid cascading issues:
 ### Phase 4: Views and Final
 11. **View Key Fixes**: Convert to valid format (lowercase, no spaces/quotes)
 12. **View References**: Ensure all references point to existing model elements
-13. **Deployment Issues**: Remove or fix invalid deployment views
+13. **Styles Block Placement**: Move `styles {}` block inside `views {}` block
+14. **External System Tags**: Convert invalid fourth parameters to proper `tags` syntax
+15. **Deployment Issues**: Remove or fix invalid deployment views
 
 ## Error Recovery Strategies
 If automated fixes fail:
@@ -156,6 +160,8 @@ The corrected DSL file must:
 - "Circular reference" → Invalid relationship structure  
 - "Invalid view key" → View naming issues
 - "Syntax error" → Malformed DSL syntax
+- "Unexpected tokens" at styles block → Styles block placed at wrong level (should be in views)
+- Invalid fourth parameter → External systems need proper tags syntax
 
 ## Success Criteria
 

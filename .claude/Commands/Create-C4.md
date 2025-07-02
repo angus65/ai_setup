@@ -93,7 +93,16 @@ views {
   deployment softwareSystemName {
     include *
   }
+  styles {
+    // styling rules go here
+  }
 }
+
+**CRITICAL: Styles Block Placement**
+	•	The `styles {}` block MUST be placed inside the `views {}` block, not at the workspace root level
+	•	Placing styles at the workspace root will cause "Unexpected tokens" errors
+	•	Correct: `views { styles { ... } }`
+	•	Incorrect: `workspace { model { ... } views { ... } styles { ... } }`
 
 	•	Do not redefine elements in views; reference declared model elements only.
 	•	All containers and components must be declared before they are referenced in views or relationships.
@@ -125,6 +134,8 @@ Before generating the final DSL, verify:
 - [ ] All containers have at least one component
 - [ ] All views reference valid model elements
 - [ ] No nested person/softwareSystem declarations
+- [ ] Styles block is placed inside views block, not at workspace root
+- [ ] External systems use proper tags syntax instead of fourth parameters
 
 ## Output Requirements
 	•	The entire result must be wrapped in a single workspace {} block.
@@ -145,6 +156,9 @@ workspace {
                 loginComponent = component "Login Component"
             }
         }
+        externalSystem = softwareSystem "External System" {
+            tags "External System"
+        }
         user -> system "Uses"
     }
     views {
@@ -155,6 +169,12 @@ workspace {
         container system {
             include *
             autoLayout lr
+        }
+        styles {
+            element "External System" {
+                background #999999
+                color #ffffff
+            }
         }
     }
 }

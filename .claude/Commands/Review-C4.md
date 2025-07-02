@@ -1,10 +1,21 @@
 # C4 DSL Review and Fix Engineering Prompt
 
+## Usage
+```
+Review and fix the Structurizr DSL file: {FILE_PATH}
+```
+
 ## Objective
-Review and validate a Structurizr DSL file for C4 model compliance, fixing any syntax errors, structural issues, or validation problems to ensure the file is ready for use at https://structurizr.com/dsl.
+Review and validate the specified Structurizr DSL file for C4 model compliance, fixing any syntax errors, structural issues, or validation problems to ensure the file is ready for use at https://structurizr.com/dsl.
+
+## Process
+1. **Read the file**: Use the Read tool to examine the contents of {FILE_PATH}
+2. **Validate structure**: Check against all validation criteria below
+3. **Apply fixes**: Make necessary corrections using Edit/MultiEdit tools
+4. **Verify output**: Ensure the corrected DSL is syntactically valid
 
 ## Input Requirements
-- A `.dsl` file containing Structurizr DSL syntax
+- A `.dsl` file path containing Structurizr DSL syntax
 - The file should represent a complete C4 model (System Context, Containers, Components, Code)
 
 ## Automated Pre-Validation
@@ -87,6 +98,25 @@ If automated fixes fail:
 - **Rollback Points**: Test after each phase
 - **Manual Fallback**: Identify sections requiring human intervention
 
+## Implementation Steps
+
+1. **Initial Analysis**:
+   ```
+   Read {FILE_PATH} and identify:
+   - Current structure and syntax issues
+   - Missing required elements
+   - Validation rule violations
+   ```
+
+2. **Apply Fixes** (in priority order):
+   - Use `MultiEdit` for multiple related changes
+   - Use `Edit` for single targeted fixes
+   - Follow the Phase 1-4 priority order listed above
+
+3. **Final Validation**:
+   - Ensure all checklist items are satisfied
+   - Verify the file is ready for https://structurizr.com/dsl
+
 ## Output Requirements
 
 The corrected DSL file must:
@@ -98,12 +128,14 @@ The corrected DSL file must:
 
 ## Validation Process
 
-1. **Parse Structure**: Verify workspace, model, and views blocks exist
-2. **Check Declarations**: Validate all elements are declared in correct locations
-3. **Validate Relationships**: Ensure all relationships reference existing elements
-4. **Review Views**: Confirm all view references are valid
-5. **Test Syntax**: Verify the DSL would load successfully in Structurizr
-6. **Clean Output**: Remove any non-DSL content or formatting
+1. **Read File**: Use `Read` tool to examine {FILE_PATH} contents
+2. **Parse Structure**: Verify workspace, model, and views blocks exist
+3. **Check Declarations**: Validate all elements are declared in correct locations
+4. **Validate Relationships**: Ensure all relationships reference existing elements
+5. **Review Views**: Confirm all view references are valid
+6. **Apply Fixes**: Use `Edit` or `MultiEdit` tools to correct issues following the priority order
+7. **Test Syntax**: Verify the DSL would load successfully in Structurizr
+8. **Clean Output**: Remove any non-DSL content or formatting
 
 ## Testing and Verification Steps
 

@@ -29,7 +29,7 @@ The output must be:
 
 
 Structurizr DSL Compliance Rules
-rule: you cannot declare person or softwareSystem inside the softwareSystem(...) {} block or inside any nested block like that.
+rule: you cannot declare person or softwareSystem inside another softwareSystem(...) {} block or inside any nested container/component block. Elements must be declared at the appropriate hierarchical level.
 
 1. Top-Level Declarations
 	•	All softwareSystem, person, and external system/container declarations must be placed directly inside the top-level model {} block.
@@ -112,8 +112,8 @@ deployment environment softwareSystemName {
   // define containerInstance, deploymentNode, infrastructureNode, etc.
 }
 
-	•	The environment must be one of:
-	•	development, live, production, or another valid predefined environment
+	•	The environment must be a valid environment identifier such as:
+	•	development, live, production, staging, test, or other environment names (without quotes)
 	•	Do not use arbitrary quoted environment names or views with invalid keys.
 	•	When unsure, omit deployment views entirely to avoid structural errors.
 
@@ -142,14 +142,19 @@ workspace {
         user = person "User"
         system = softwareSystem "System Name" {
             webapp = container "Web App" {
-                component "Login Component"
+                loginComponent = component "Login Component"
             }
         }
-        user -> webapp "Uses"
+        user -> system "Uses"
     }
     views {
         systemContext system {
             include *
+            autoLayout lr
+        }
+        container system {
+            include *
+            autoLayout lr
         }
     }
 }

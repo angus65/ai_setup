@@ -131,4 +131,4 @@ The corrected DSL file must:
 - All C4 model levels are properly represented
 - Views render correctly showing intended architecture
 - No validation warnings or syntax errors
-- Original architectural design intent is preserved2
+- Original architectural design intent is preserved

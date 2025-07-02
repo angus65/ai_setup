@@ -7,6 +7,13 @@ Review and validate a Structurizr DSL file for C4 model compliance, fixing any s
 - A `.dsl` file containing Structurizr DSL syntax
 - The file should represent a complete C4 model (System Context, Containers, Components, Code)
 
+## Automated Pre-Validation
+Before manual review, run these regex checks:
+- Workspace wrapper: `^workspace\s*\{.*\}$` (single line mode)
+- Balanced braces: Count `{` and `}` - must be equal
+- Valid identifiers: `^[a-zA-Z][a-zA-Z0-9_]*$`
+- No trailing comments on relationships: `.*->\s*[^"]*"[^"]*"\s*$`
+
 ## Validation Checklist
 
 ### 1. Top-Level Structure Validation
@@ -49,28 +56,36 @@ Review and validate a Structurizr DSL file for C4 model compliance, fixing any s
 - [ ] Infrastructure nodes are properly defined
 - [ ] If deployment views are invalid or incomplete, remove them entirely
 
-## Common Issues to Fix
+## Fix Strategy Priority Order
+Apply fixes in this order to avoid cascading issues:
 
-### Structural Fixes
-1. **Nested System Declarations**: Move any nested `person` or `softwareSystem` to top level
-2. **Container Placement**: Ensure containers are only inside `softwareSystem` blocks
-3. **Component Placement**: Ensure components are only inside `container` blocks
+### Phase 1: Structural Foundation
+1. **Workspace Wrapper**: Ensure entire content is in `workspace {}` block
+2. **Missing Braces**: Fix all unmatched opening/closing braces
+3. **Declaration Order**: Move all `person` and `softwareSystem` to model top-level
 
-### Relationship Fixes
-1. **Order Dependencies**: Reorder declarations so all elements exist before relationships
-2. **Invalid Relationships**: Remove container-to-own-component relationships
-3. **Duplicate Relationships**: Consolidate multiple relationships between same elements
-4. **Comment Cleanup**: Remove trailing comments from relationship lines
+### Phase 2: Element Placement  
+4. **Container Placement**: Move containers inside `softwareSystem` blocks only
+5. **Component Placement**: Move components inside `container` blocks only
+6. **Identifier Cleanup**: Fix invalid characters, ensure uniqueness
 
-### View Fixes
-1. **Invalid Keys**: Convert view names to valid format (lowercase, no spaces/quotes)
-2. **Missing References**: Ensure all view references point to existing model elements
-3. **Deployment Issues**: Remove or fix invalid deployment views
+### Phase 3: Relationships
+7. **Declaration Dependencies**: Ensure all referenced elements exist first
+8. **Invalid Relationships**: Remove container-to-own-component relationships  
+9. **Duplicate Relationships**: Consolidate multiple relationships between same elements
+10. **Comment Cleanup**: Remove trailing comments from relationship lines
 
-### Syntax Fixes
-1. **Missing Braces**: Ensure all blocks have matching opening/closing braces
-2. **Invalid Characters**: Remove or escape invalid characters in identifiers
-3. **Workspace Wrapper**: Ensure entire content is in `workspace {}` block
+### Phase 4: Views and Final
+11. **View Key Fixes**: Convert to valid format (lowercase, no spaces/quotes)
+12. **View References**: Ensure all references point to existing model elements
+13. **Deployment Issues**: Remove or fix invalid deployment views
+
+## Error Recovery Strategies
+If automated fixes fail:
+- **Backup Strategy**: Save original before modifications
+- **Incremental Fix**: Apply one fix category at a time  
+- **Rollback Points**: Test after each phase
+- **Manual Fallback**: Identify sections requiring human intervention
 
 ## Output Requirements
 
@@ -89,6 +104,26 @@ The corrected DSL file must:
 4. **Review Views**: Confirm all view references are valid
 5. **Test Syntax**: Verify the DSL would load successfully in Structurizr
 6. **Clean Output**: Remove any non-DSL content or formatting
+
+## Testing and Verification Steps
+
+### Syntax Validation
+1. Copy corrected DSL to https://structurizr.com/dsl
+2. Verify no error messages appear in editor
+3. Check all views render without warnings
+4. Validate export functionality works
+
+### Content Verification  
+1. Confirm all intended architectural elements are present
+2. Verify relationships match expected system interactions
+3. Check that component groupings make logical sense
+4. Ensure external systems are properly represented
+
+### Common Error Messages to Watch For
+- "Element not found" → Missing declaration
+- "Circular reference" → Invalid relationship structure  
+- "Invalid view key" → View naming issues
+- "Syntax error" → Malformed DSL syntax
 
 ## Success Criteria
 

@@ -6,6 +6,21 @@ You are given a source codebase. Your task is to generate a complete Structurizr
 	•	Components
 	•	Code
 
+## Pre-Analysis Steps
+Before generating the DSL, analyze the codebase structure:
+1. Examine package.json, requirements.txt, or similar files to identify technologies
+2. Review directory structure to understand container boundaries
+3. Identify external dependencies and integrations
+4. Map code modules to logical components
+5. Determine deployment patterns from configuration files
+
+## Technology-to-Container Mapping
+- Frontend apps (React, Vue, Angular) → Web Application container
+- Backend APIs (Express, FastAPI, Spring) → API Application container  
+- Databases (PostgreSQL, MongoDB) → Database container
+- Message queues (Redis, RabbitMQ) → Message Broker container
+- Mobile apps → Mobile App container
+
 The output must be:
 	•	Fully compliant with Structurizr DSL syntax
 	•	Ready to paste into https://structurizr.com/dsl
@@ -28,12 +43,38 @@ rule: you cannot declare person or softwareSystem inside the softwareSystem(...)
 	•	Define components inside their corresponding container block.
 	•	Each component must have a globally unique identifier (e.g., authRoute, tokenActions, userService) for relationship references.
 
+## Naming Conventions
+- Use camelCase for identifiers (webApp, apiService, userDatabase)
+- Avoid spaces, special characters, and reserved words
+- Keep names descriptive but concise
+- Ensure global uniqueness across entire model
+
+### Component Identification Patterns
+- Controllers/Routes → nameController, nameRoute
+- Services/Business Logic → nameService, nameManager  
+- Data Access → nameRepository, nameDAO
+- UI Components → nameComponent, nameView
+
 4. Relationships
 	•	Use the -> operator only after both source and destination elements have been declared.
 	•	Do not create relationships between a container and its own components.
 	•	Interactions with other systems or containers should originate from the container, not its components.
 	•	Eliminate duplicate relationships; each unique source-destination pair should be connected only once.
 	•	Remove all trailing comments on relationship lines to maintain DSL syntax compliance.
+
+### Relationship Examples
+```
+// CORRECT: External system to container
+user -> webApp "Uses"
+webApp -> apiApp "Makes API calls to"
+apiApp -> database "Reads from and writes to"
+
+// INCORRECT: Container to its own components
+webApp -> loginComponent "Contains" // WRONG
+
+// INCORRECT: Component to external systems  
+loginComponent -> apiApp "Calls" // WRONG - should be webApp -> apiApp
+```
 
 5. View Definitions
 
@@ -76,7 +117,16 @@ deployment environment softwareSystemName {
 	•	Do not use arbitrary quoted environment names or views with invalid keys.
 	•	When unsure, omit deployment views entirely to avoid structural errors.
 
-Output Requirements
+## Pre-Output Validation Checklist
+Before generating the final DSL, verify:
+- [ ] All identifiers are unique and follow naming conventions
+- [ ] All relationships reference existing elements
+- [ ] No circular dependencies in declarations
+- [ ] All containers have at least one component
+- [ ] All views reference valid model elements
+- [ ] No nested person/softwareSystem declarations
+
+## Output Requirements
 	•	The entire result must be wrapped in a single workspace {} block.
 	•	The DSL file must contain:
 	•	model {} with all people, systems, containers, components, and relationships
@@ -84,3 +134,23 @@ Output Requirements
 	•	Optional styles {} block for custom visual presentation
 	•	No commentary, no markdown, no HTML—only valid Structurizr DSL.
 	•	The result must be fully copy/paste ready for use in https://structurizr.com/dsl with no modifications required.
+
+## Example Minimal Structure
+```
+workspace {
+    model {
+        user = person "User"
+        system = softwareSystem "System Name" {
+            webapp = container "Web App" {
+                component "Login Component"
+            }
+        }
+        user -> webapp "Uses"
+    }
+    views {
+        systemContext system {
+            include *
+        }
+    }
+}
+```
